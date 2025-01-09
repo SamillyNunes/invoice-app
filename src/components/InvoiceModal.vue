@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="invoice-wrap flex flex-column"
-    @click="checkClick"
-    ref="invoiceWrap"
-  >
-    <form @submit.prevent="submitForm" class="invoice-content">
+  <div class="invoice-wrap flex flex-column" ref="invoiceWrap">
+    <form class="invoice-content">
       <h1>Nova Fatura</h1>
 
       <!-- Emitente da fatura -->
@@ -123,13 +119,7 @@
 
         <div class="input flex flex-column">
           <label for="paymentTerms">Termos de Pagamento:</label>
-          <select
-            disabled
-            required
-            type="text"
-            id="paymentTerms"
-            v-model="paymentTerms"
-          >
+          <select required id="paymentTerms" v-model="paymentTerms">
             <option value="30">30 dias</option>
             <option value="60">60 dias</option>
           </select>
@@ -137,7 +127,6 @@
         <div class="input flex flex-column">
           <label for="productDescription">Descrição do produto:</label>
           <input
-            disabled
             required
             type="text"
             id="productDescription"
@@ -156,7 +145,7 @@
                 <th class="total">Total</th>
               </tr>
             </thead>
-            <tbody>
+            <!-- <tbody>
               <tr
                 class="table-items flex"
                 v-for="(item, index) in invoiceItemList"
@@ -182,9 +171,9 @@
                   />
                 </td>
               </tr>
-            </tbody>
+            </tbody> -->
           </table>
-          <div @click="addNewInvoice()" class="flex button">
+          <div class="flex button">
             <img
               src="../assets/icon-plus.svg"
               alt="Ícone de adicionar novo item"
@@ -200,10 +189,8 @@
           <button @click="closeInvoice" class="red">Cancelar</button>
         </div>
         <div class="right">
-          <button @click="saveDraft" class="dark-purple">
-            Salvar Rascunho
-          </button>
-          <button @click="publishInvoice" class="purple">Criar Fatura</button>
+          <button class="dark-purple">Salvar Rascunho</button>
+          <button class="purple">Criar Fatura</button>
         </div>
       </div>
     </form>
@@ -228,10 +215,17 @@ export default defineComponent({
       clientCity: "",
       clientZipCode: "",
       clientCountry: "",
-      invoiceDateUnix: "",
+
+      invoiceDateUnix: undefined as undefined | number,
       invoiceDate: "",
+      dateOptions: {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      } as Intl.DateTimeFormatOptions,
+
       paymentTerms: "",
-      paymentDueDateUnix: "",
+      paymentDueDateUnix: null,
       paymentDueDate: "",
       productDescription: "",
       invoicePending: false,
@@ -240,12 +234,23 @@ export default defineComponent({
       invoiceTotal: 0,
     };
   },
-  methods:{
-    ...mapMutations(['TOGGLE_INVOICE']),
-    closeInvoice(){
+  created() {
+    // pega as datas atuais para os campos de data da fatura
+    console.log("entrou no created!");
+    this.invoiceDateUnix = Date.now();
+    console.log(this.invoiceDateUnix.toString());
+    this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString(
+      "pt-br",
+      this.dateOptions
+    );
+    console.log(this.invoiceDate);
+  },
+  methods: {
+    ...mapMutations(["TOGGLE_INVOICE"]),
+    closeInvoice() {
       this.TOGGLE_INVOICE();
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -259,7 +264,7 @@ export default defineComponent({
   height: 100vh;
   overflow: scroll;
   // o estilo abaixo fara com que nao apareca o scroll na animacao
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     display: none;
   }
 
