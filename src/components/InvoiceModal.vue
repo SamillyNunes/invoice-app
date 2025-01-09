@@ -212,6 +212,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { mapMutations } from "vuex";
 
 export default defineComponent({
   name: "InvoiceModal",
@@ -239,6 +240,12 @@ export default defineComponent({
       invoiceTotal: 0,
     };
   },
+  methods:{
+    ...mapMutations(['TOGGLE_INVOICE']),
+    closeInvoice(){
+      this.TOGGLE_INVOICE();
+    }
+  }
 });
 </script>
 

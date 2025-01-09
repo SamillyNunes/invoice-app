@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { mapMutations } from "vuex";
 
 export default defineComponent({
   name: "CustomHeader",
@@ -43,6 +44,10 @@ export default defineComponent({
     toggleFilterMenu() {
       this.filterMenu = !this.filterMenu;
     },
+    ...mapMutations(['TOGGLE_INVOICE']),
+    newInvoice(){
+      this.TOGGLE_INVOICE();
+    }
   },
 });
 </script>
