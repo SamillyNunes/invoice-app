@@ -163,12 +163,8 @@
                 <td class="total flex">
                   R${{ (item.total = item.quantity * item.price) }}
                 </td>
-                <td>
-                  <img
-                    
-                    src="../assets/icon-delete.svg"
-                    alt="Ícone de deletar"
-                  />
+                <td @click="deleteInvoiceItem(item.id)">
+                  <img src="../assets/icon-delete.svg" alt="Ícone de deletar" />
                 </td>
               </tr>
             </tbody>
@@ -261,6 +257,9 @@ export default defineComponent({
         price: 0,
         total: 0,
       } as InvoiceItem);
+    },
+    deleteInvoiceItem(id: string) {
+      this.invoiceItemList = this.invoiceItemList.filter((i) => i.id !== id);
     },
   },
   watch: {
