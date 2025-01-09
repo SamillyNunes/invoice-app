@@ -258,6 +258,10 @@ export default defineComponent({
   width: 100%;
   height: 100vh;
   overflow: scroll;
+  // o estilo abaixo fara com que nao apareca o scroll na animacao
+  &::-webkit-scrollbar{
+    display: none;
+  }
 
   @media (min-width: 900px) {
     left: 90px;
