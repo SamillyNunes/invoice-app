@@ -3,6 +3,7 @@
     <div v-if="!mobile" class="app flex ">
       <Navigation />
       <div class="app-content flex flex-column">
+        <InvoiceModal />
         <router-view />
       </div>
     </div>
@@ -19,11 +20,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Navigation from './components/Navigation.vue';
+import InvoiceModal from './components/InvoiceModal.vue';
 
 
 export default defineComponent({
   name: 'App',
-  components: { Navigation },
+  components: { Navigation, InvoiceModal },
   data() {
     return {
       mobile: false,
