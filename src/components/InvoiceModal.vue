@@ -225,8 +225,9 @@ export default defineComponent({
       } as Intl.DateTimeFormatOptions,
 
       paymentTerms: "",
-      paymentDueDateUnix: null,
+      paymentDueDateUnix: null as null | number,
       paymentDueDate: "",
+
       productDescription: "",
       invoicePending: false,
       invoiceDraft: false,
@@ -249,6 +250,19 @@ export default defineComponent({
     ...mapMutations(["TOGGLE_INVOICE"]),
     closeInvoice() {
       this.TOGGLE_INVOICE();
+    },
+  },
+  watch: {
+    // o nome tem que corresponder ao nome da var que se quer observar e reagir a mudancas
+    paymentTerms() {
+      const futureDate = new Date();
+      const paymentTermsConverted = parseInt(this.paymentTerms);
+      this.paymentDueDateUnix = futureDate.setDate(
+        futureDate.getDate() + paymentTermsConverted
+      );
+      this.paymentDueDate = new Date(
+        this.paymentDueDateUnix
+      ).toLocaleDateString("pt-br", this.dateOptions);
     },
   },
 });
