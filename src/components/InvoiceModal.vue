@@ -145,7 +145,7 @@
                 <th class="total">Total</th>
               </tr>
             </thead>
-            <!-- <tbody>
+            <tbody>
               <tr
                 class="table-items flex"
                 v-for="(item, index) in invoiceItemList"
@@ -155,25 +155,25 @@
                   <input type="text" v-model="item.name" />
                 </td>
                 <td class="qty">
-                  <input type="text" v-model="item.qtd" />
+                  <input type="text" v-model="item.quantity" />
                 </td>
                 <td class="price">
                   <input type="text" v-model="item.price" />
                 </td>
                 <td class="total flex">
-                  R${{ (item.total = item.qtd * item.price) }}
+                  R${{ (item.total = item.quantity * item.price) }}
                 </td>
                 <td>
                   <img
-                    @click="deleteInvoiceItem(item.id)"
+                    
                     src="../assets/icon-delete.svg"
                     alt="Ícone de deletar"
                   />
                 </td>
               </tr>
-            </tbody> -->
+            </tbody>
           </table>
-          <div class="flex button">
+          <div @click="addNewInvoiceItem" class="flex button">
             <img
               src="../assets/icon-plus.svg"
               alt="Ícone de adicionar novo item"
@@ -198,6 +198,8 @@
 </template>
 
 <script lang="ts">
+import InvoiceItem from "@/interfaces/InvoiceItem";
+import { uid } from "uid";
 import { defineComponent } from "vue";
 import { mapMutations } from "vuex";
 
@@ -231,7 +233,7 @@ export default defineComponent({
       productDescription: "",
       invoicePending: false,
       invoiceDraft: false,
-      invoiceItemList: [],
+      invoiceItemList: [] as Array<InvoiceItem>,
       invoiceTotal: 0,
     };
   },
@@ -250,6 +252,15 @@ export default defineComponent({
     ...mapMutations(["TOGGLE_INVOICE"]),
     closeInvoice() {
       this.TOGGLE_INVOICE();
+    },
+    addNewInvoiceItem() {
+      this.invoiceItemList.push({
+        id: uid(),
+        name: "",
+        quantity: 0,
+        price: 0,
+        total: 0,
+      } as InvoiceItem);
     },
   },
   watch: {
