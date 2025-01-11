@@ -1,6 +1,6 @@
 <template>
   <div class="invoice-wrap flex flex-column" ref="invoiceWrap">
-    <form class="invoice-content">
+    <form @submit.prevent="submitForm" class="invoice-content">
       <h1>Nova Fatura</h1>
 
       <!-- Emitente da fatura -->
@@ -182,11 +182,15 @@
       <!-- Actions buttons -->
       <div class="save flex">
         <div class="left">
-          <button @click="closeInvoice" class="red">Cancelar</button>
+          <button @click="closeInvoice" type="button" class="red">
+            Cancelar
+          </button>
         </div>
         <div class="right">
-          <button class="dark-purple">Salvar Rascunho</button>
-          <button class="purple">Criar Fatura</button>
+          <button @click="saveDraft" class="dark-purple">
+            Salvar Rascunho
+          </button>
+          <button @click="publishInvoice" class="purple">Criar Fatura</button>
         </div>
       </div>
     </form>
@@ -198,6 +202,8 @@ import InvoiceItem from "@/interfaces/InvoiceItem";
 import { uid } from "uid";
 import { defineComponent } from "vue";
 import { mapMutations } from "vuex";
+import { db } from "@/firebase/firebaseInit";
+import { addDoc, collection } from "firebase/firestore";
 
 export default defineComponent({
   name: "InvoiceModal",
@@ -260,6 +266,62 @@ export default defineComponent({
     },
     deleteInvoiceItem(id: string) {
       this.invoiceItemList = this.invoiceItemList.filter((i) => i.id !== id);
+    },
+    calcInvoiceTotal() {
+      // resetando pra zero para garantir que, ao calcular, nao incremente em um valor
+      // anteriormente ja calculado
+      this.invoiceTotal = 0;
+      this.invoiceItemList.forEach((item) => {
+        this.invoiceTotal += item.total;
+      });
+    },
+    publishInvoice() {
+      this.invoicePending = true;
+    },
+    saveDraft() {
+      this.invoiceDraft = true;
+    },
+    async uploadInvoice() {
+      if (this.invoiceItemList.length <= 0) {
+        alert("Por favor insira itens na fatura.");
+        return;
+      }
+
+      this.calcInvoiceTotal();
+
+      const docReference = collection(db, "invoices");
+      await addDoc(docReference, {
+        invoiceId: uid(6),
+        billerStreetAddress: this.billerStreetAddress,
+        billerCity: this.billerCity,
+        billerZipCode: this.billerZipCode,
+        billerCountry: this.billerCountry,
+        clientName: this.clientName,
+        clientEmail: this.clientEmail,
+        clientStreetAddress: this.clientStreetAddress,
+        clientCity: this.clientCity,
+        clientZipCode: this.clientCity,
+        clientCountry: this.clientCountry,
+
+        invoiceDateUnix: this.invoiceDateUnix,
+        invoiceDate: this.invoiceDate,
+
+        paymentTerms: this.paymentTerms,
+        paymentDueDateUnix: this.paymentDueDateUnix,
+        paymentDueDate: this.paymentDueDate,
+
+        productDescription: this.productDescription,
+        invoiceItemList: this.invoiceItemList,
+        invoicePending: this.invoicePending,
+        invoiceDraft: this.invoiceDraft,
+        invoiceTotal: this.invoiceTotal,
+        invoicePaid: null,
+      });
+
+      this.TOGGLE_INVOICE();
+    },
+    submitForm() {
+      this.uploadInvoice();
     },
   },
   watch: {
