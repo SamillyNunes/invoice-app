@@ -1,6 +1,9 @@
 <template>
   <div class="invoice-wrap flex flex-column" ref="invoiceWrap">
     <form @submit.prevent="submitForm" class="invoice-content">
+
+      <Loading v-show="loading" />
+
       <h1>Nova Fatura</h1>
 
       <!-- Emitente da fatura -->
@@ -204,11 +207,15 @@ import { defineComponent } from "vue";
 import { mapMutations } from "vuex";
 import { db } from "@/firebase/firebaseInit";
 import { addDoc, collection } from "firebase/firestore";
+import Loading from "./Loading.vue";
 
 export default defineComponent({
   name: "InvoiceModal",
+  components: { Loading },
   data() {
     return {
+      loading: false,
+
       billerStreetAddress: "",
       billerCity: "",
       billerZipCode: "",
@@ -287,6 +294,8 @@ export default defineComponent({
         return;
       }
 
+      this.loading=true;
+
       this.calcInvoiceTotal();
 
       const docReference = collection(db, "invoices");
@@ -318,7 +327,10 @@ export default defineComponent({
         invoicePaid: null,
       });
 
+      this.loading=false;
+      
       this.TOGGLE_INVOICE();
+
     },
     submitForm() {
       this.uploadInvoice();
