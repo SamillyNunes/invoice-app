@@ -190,10 +190,10 @@
           </button>
         </div>
         <div class="right">
-          <button @click="saveDraft" class="dark-purple">
+          <button @click="saveDraft" type="submit" class="dark-purple">
             Salvar Rascunho
           </button>
-          <button @click="publishInvoice" class="purple">Criar Fatura</button>
+          <button @click="publishInvoice" type="submit" class="purple">Criar Fatura</button>
         </div>
       </div>
     </form>
