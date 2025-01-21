@@ -4,12 +4,17 @@
     <CustomHeader />
 
     <!-- Invoices -->
-    <div>
+    <div v-if="invoices.length">
       <Invoice
         v-for="invoice in invoices"
         :key="invoice.invoiceId"
         :invoice="invoice"
       />
+    </div>
+    <div v-else class="empty flex flex-column">
+      <img src="../assets/illustration-empty.svg" alt="Desenho simbolizando lista de faturas vazia." />
+      <h3>Não há nada aqui.</h3>
+      <p>Crie uma nova fatura clicando no botão Nova Fatura e dê inicio!</p>
     </div>
   </div>
 </template>
@@ -32,5 +37,28 @@ export default defineComponent({
 <style lang="scss" scoped>
 .home {
   color: #fff;
+
+  .empty{
+    margin-top: 160px;
+    align-items: center;
+
+    img{
+      width: 214px;
+      height: 200px;
+    }
+
+    h3{
+      font-size: 20px;
+      margin-top: 40px;
+    }
+
+    p{
+      text-align: center;
+      max-width: 224px;
+      font-size: 12px;
+      font-weight: 300;
+      margin-top: 16px;
+    }
+  }
 }
 </style>
