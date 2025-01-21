@@ -23,9 +23,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { mapState, mapActions } from 'vuex';
 import Navigation from './components/Navigation.vue';
 import InvoiceModal from './components/InvoiceModal.vue';
-import { mapState } from 'vuex';
 import Modal from './components/Modal.vue';
 
 
@@ -38,6 +38,7 @@ export default defineComponent({
     }
   },
   created() {
+    this.GET_INVOICES();
     this.checkScreen();
     window.addEventListener("resize", this.checkScreen);
   },
@@ -51,7 +52,8 @@ export default defineComponent({
       }
 
       this.mobile=false;
-    }
+    },
+    ...mapActions(['GET_INVOICES']),
   },
   computed: {
     ...mapState(['invoiceModal', 'modalActive']),
