@@ -1,5 +1,8 @@
 <template>
-  <router-link to="" class="invoice flex">
+  <router-link
+    :to="{ name: 'invoice', params: { invoiceId: invoice.invoiceId } }"
+    class="invoice flex"
+  >
     <div class="left flex">
       <span class="tracking-number">#{{ invoice.invoiceId }}</span>
       <span class="due-date">{{ invoice.paymentDueDate }}</span>
@@ -20,7 +23,10 @@
         <span v-if="invoice.invoicePending">Pendente</span>
       </div>
       <div class="icon">
-        <img src="../assets/icon-arrow-right.svg" alt="Ícone de seguir a direita" />
+        <img
+          src="../assets/icon-arrow-right.svg"
+          alt="Ícone de seguir a direita"
+        />
       </div>
     </div>
   </router-link>
@@ -42,47 +48,45 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.invoice {
+  text-decoration: none;
+  cursor: pointer;
+  gap: 16px;
+  margin-bottom: 16px;
+  color: #fff;
+  background-color: #1e2139;
+  border-radius: 20px;
+  padding: 28px 32px;
+  align-items: center;
 
-.invoice{
-    text-decoration: none;
-    cursor: pointer;
+  span {
+    font-size: 13px;
+  }
+
+  .left {
+    align-items: center;
+    flex-basis: 60%;
     gap: 16px;
-    margin-bottom: 16px;
-    color: #fff;
-    background-color: #1e2139;
-    border-radius: 20px;
-    padding: 28px 32px;
+
+    span {
+      flex: 1;
+    }
+
+    .tracking-number {
+      text-transform: uppercase;
+    }
+  }
+
+  .right {
+    gap: 16px;
+    flex-basis: 40%;
     align-items: center;
 
-    span{
-        font-size: 13px;
+    .price {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 600;
     }
-
-    .left{
-        align-items: center;
-        flex-basis: 60%;
-        gap: 16px;
-
-        span{
-            flex: 1;
-        }
-
-        .tracking-number{
-            text-transform: uppercase;
-        }
-    }
-
-    .right{
-        gap: 16px;
-        flex-basis: 40%;
-        align-items: center;
-
-        .price{
-            flex: 1;
-            font-size: 16px;
-            font-weight: 600;
-        }
-    }
+  }
 }
-
 </style>
