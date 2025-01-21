@@ -1,5 +1,5 @@
 <template>
-  <div class="invoice-wrap flex flex-column" ref="invoiceWrap">
+  <div @click="checkClick" class="invoice-wrap flex flex-column" ref="invoiceWrap">
     <form @submit.prevent="submitForm" class="invoice-content">
 
       <Loading v-show="loading" />
@@ -258,7 +258,12 @@ export default defineComponent({
     console.log(this.invoiceDate);
   },
   methods: {
-    ...mapMutations(["TOGGLE_INVOICE"]),
+    ...mapMutations(["TOGGLE_INVOICE", 'TOGGLE_MODAL']),
+    checkClick(e:any){
+      if(e.target===this.$refs.invoiceWrap){
+        this.TOGGLE_MODAL();
+      }
+    },
     closeInvoice() {
       this.TOGGLE_INVOICE();
     },
