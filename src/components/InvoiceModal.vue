@@ -248,15 +248,41 @@ export default defineComponent({
     };
   },
   created() {
-    // pega as datas atuais para os campos de data da fatura
-    console.log("entrou no created!");
-    this.invoiceDateUnix = Date.now();
-    console.log(this.invoiceDateUnix.toString());
-    this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString(
-      "pt-br",
-      this.dateOptions
-    );
-    console.log(this.invoiceDate);
+    if(!this.isEditingInvoice){
+      // pega as datas atuais para os campos de data da fatura
+      this.invoiceDateUnix = Date.now();
+      this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString(
+        "pt-br",
+        this.dateOptions
+      );
+
+    } else {
+      const currentInvoice = this.currentInvoiceArray[0];
+      
+      this.billerStreetAddress= currentInvoice.billerStreetAddress;
+      this.billerCity= currentInvoice.billerCity;
+      this.billerZipCode= currentInvoice.billerZipCode;
+      this.billerCountry= currentInvoice.billerCountry;
+      this.clientName= currentInvoice.clientName;
+      this.clientEmail= currentInvoice.clientEmail;
+      this.clientStreetAddress= currentInvoice.clientStreetAddress;
+      this.clientCity= currentInvoice.clientCity;
+      this.clientZipCode= currentInvoice.clientZipCode;
+      this.clientCountry= currentInvoice.clientCountry;
+
+      this.invoiceDateUnix= currentInvoice.invoiceDateUnix;
+      this.invoiceDate= currentInvoice.invoiceDate;
+
+      this.paymentTerms= currentInvoice.paymentTerms;
+      this.paymentDueDateUnix= currentInvoice.paymentDueDateUnix;
+      this.paymentDueDate= currentInvoice.paymentDueDate;
+
+      this.productDescription= currentInvoice.productDescription;
+      this.invoicePending= currentInvoice.invoicePending;
+      this.invoiceDraft= currentInvoice.invoiceDraft;
+      this.invoiceItemList= currentInvoice.invoiceItemList;
+      this.invoiceTotal= currentInvoice.invoiceTotal;
+    }
   },
   methods: {
     ...mapMutations(["TOGGLE_INVOICE", 'TOGGLE_MODAL', 'TOGGLE_EDIT_INVOICE']),
@@ -346,7 +372,7 @@ export default defineComponent({
     },
   },
   computed: {
-    ...mapState(["isEditingInvoice"]),
+    ...mapState(["isEditingInvoice", "currentInvoiceArray"]),
   },
   watch: {
     // o nome tem que corresponder ao nome da var que se quer observar e reagir a mudancas
