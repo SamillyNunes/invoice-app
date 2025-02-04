@@ -4,7 +4,7 @@
 
       <Loading v-show="loading" />
 
-      <h1>Nova Fatura</h1>
+      <h1>{{ isEditingInvoice ? 'Editar Fatura' : 'Nova Fatura' }}</h1>
 
       <!-- Emitente da fatura -->
       <div class="bill-from flex-flex-column">
@@ -190,10 +190,11 @@
           </button>
         </div>
         <div class="right">
-          <button @click="saveDraft" type="submit" class="dark-purple">
+          <button v-if="!isEditingInvoice" @click="saveDraft" type="submit" class="dark-purple">
             Salvar Rascunho
           </button>
-          <button @click="publishInvoice" type="submit" class="purple">Criar Fatura</button>
+          <button v-if="!isEditingInvoice" @click="publishInvoice" type="submit" class="purple">Criar Fatura</button>
+          <button v-else @click="publishInvoice" type="submit" class="purple">Editar Fatura</button>
         </div>
       </div>
     </form>
@@ -204,7 +205,7 @@
 import InvoiceItem from "@/interfaces/InvoiceItem";
 import { uid } from "uid";
 import { defineComponent } from "vue";
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from "vuex";
 import { db } from "@/firebase/firebaseInit";
 import { addDoc, collection } from "firebase/firestore";
 import Loading from "./Loading.vue";
@@ -258,7 +259,7 @@ export default defineComponent({
     console.log(this.invoiceDate);
   },
   methods: {
-    ...mapMutations(["TOGGLE_INVOICE", 'TOGGLE_MODAL']),
+    ...mapMutations(["TOGGLE_INVOICE", 'TOGGLE_MODAL', 'TOGGLE_EDIT_INVOICE']),
     checkClick(e:any){
       if(e.target===this.$refs.invoiceWrap){
         this.TOGGLE_MODAL();
@@ -266,6 +267,9 @@ export default defineComponent({
     },
     closeInvoice() {
       this.TOGGLE_INVOICE();
+      if(this.isEditingInvoice){
+        this.TOGGLE_EDIT_INVOICE();
+      }
     },
     addNewInvoiceItem() {
       this.invoiceItemList.push({
@@ -340,6 +344,9 @@ export default defineComponent({
     submitForm() {
       this.uploadInvoice();
     },
+  },
+  computed: {
+    ...mapState(["isEditingInvoice"]),
   },
   watch: {
     // o nome tem que corresponder ao nome da var que se quer observar e reagir a mudancas
