@@ -205,9 +205,9 @@
 import InvoiceItem from "@/interfaces/InvoiceItem";
 import { uid } from "uid";
 import { defineComponent } from "vue";
-import { mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 import { db } from "@/firebase/firebaseInit";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import Loading from "./Loading.vue";
 
 export default defineComponent({
@@ -216,6 +216,8 @@ export default defineComponent({
   data() {
     return {
       loading: false,
+
+      docId: null as null | string,
 
       billerStreetAddress: "",
       billerCity: "",
@@ -259,6 +261,8 @@ export default defineComponent({
     } else {
       const currentInvoice = this.currentInvoiceArray[0];
       
+      this.docId = currentInvoice.docId;
+
       this.billerStreetAddress= currentInvoice.billerStreetAddress;
       this.billerCity= currentInvoice.billerCity;
       this.billerZipCode= currentInvoice.billerZipCode;
@@ -286,6 +290,7 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations(["TOGGLE_INVOICE", 'TOGGLE_MODAL', 'TOGGLE_EDIT_INVOICE']),
+    ...mapActions(["UPDATE_INVOICE"]),
     checkClick(e:any){
       if(e.target===this.$refs.invoiceWrap){
         this.TOGGLE_MODAL();
@@ -367,8 +372,58 @@ export default defineComponent({
       this.TOGGLE_INVOICE();
 
     },
+    async updateInvoice() {
+      if (this.invoiceItemList.length <= 0) {
+        alert("Por favor insira itens na fatura.");
+        return;
+      }
+
+      this.loading=true;
+
+      this.calcInvoiceTotal();
+
+      const collectionReference = collection(db, "invoices");
+      const docRef = doc(collectionReference, `${this.docId}`);
+      await updateDoc(docRef, {
+        billerStreetAddress: this.billerStreetAddress,
+        billerCity: this.billerCity,
+        billerZipCode: this.billerZipCode,
+        billerCountry: this.billerCountry,
+        clientName: this.clientName,
+        clientEmail: this.clientEmail,
+        clientStreetAddress: this.clientStreetAddress,
+        clientCity: this.clientCity,
+        clientZipCode: this.clientCity,
+        clientCountry: this.clientCountry,
+
+        paymentTerms: this.paymentTerms,
+        paymentDueDateUnix: this.paymentDueDateUnix,
+        paymentDueDate: this.paymentDueDate,
+
+        productDescription: this.productDescription,
+        invoiceItemList: this.invoiceItemList,
+        invoiceTotal: this.invoiceTotal,
+      });
+
+      this.loading=false;
+
+      console.log('ROUTE:');
+      console.log(this.$route.params);
+
+      const data = {
+        docId: this.docId,
+        routeId: this.$route.params.invoiceId,
+      };
+      
+      this.UPDATE_INVOICE(data);
+
+    },
     submitForm() {
-      this.uploadInvoice();
+      if(this.isEditingInvoice){
+        this.updateInvoice();
+      } else {
+        this.uploadInvoice();
+      }
     },
   },
   computed: {

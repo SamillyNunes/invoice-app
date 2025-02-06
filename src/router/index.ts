@@ -11,6 +11,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/invoice/:invoiceId',
     name: 'invoice',
+    props: true,
     component: InvoiceView
   }
 ]
