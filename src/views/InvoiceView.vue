@@ -26,7 +26,7 @@
       </div>
       <div class="right flex">
         <button @click="toggleEditInvoice" class="dark-purple">Editar</button>
-        <button class="red">Deletar</button>
+        <button @click="deleteInvoice(currentInvoice.docId)" class="red">Deletar</button>
         <button v-if="currentInvoice.invoicePending" class="green">
           Marcar como Pago
         </button>
@@ -108,7 +108,7 @@
 <script lang="ts">
 import Invoice from "@/interfaces/Invoice";
 import { defineComponent } from "vue";
-import { mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 export default defineComponent({
   name: "InvoiceView",
@@ -122,6 +122,7 @@ export default defineComponent({
   },
   methods: {
     ...mapMutations(["SET_CURRENT_INVOICE", "TOGGLE_EDIT_INVOICE", "TOGGLE_INVOICE"]),
+    ...mapActions(["DELETE_INVOICE"]),
     getCurrentInvoice() {
       this.SET_CURRENT_INVOICE(this.$route.params?.invoiceId);
       this.currentInvoice = this.currentInvoiceArray[0];
@@ -129,6 +130,10 @@ export default defineComponent({
     toggleEditInvoice(){
       this.TOGGLE_EDIT_INVOICE();
       this.TOGGLE_INVOICE();
+    },
+    async deleteInvoice(docId: string){
+      await this.DELETE_INVOICE(docId);
+      this.$router.push({name: 'home'});
     }
   },
   computed: {
