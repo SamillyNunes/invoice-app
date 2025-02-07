@@ -32,7 +32,7 @@ export default createStore({
       state.isEditingInvoice=!state.isEditingInvoice;
     },
     DELETE_INVOICE(state, payload){
-      state.currentInvoiceArray = state.currentInvoiceArray?.filter(invoice => invoice.docId!==payload) ?? null;
+      state.invoices = state.invoices?.filter(invoice => invoice.docId!==payload) ?? null;
     },
   },
   actions: {

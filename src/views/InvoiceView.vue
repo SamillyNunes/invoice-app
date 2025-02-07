@@ -132,8 +132,18 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(["currentInvoiceArray"]),
+    ...mapState(["currentInvoiceArray", "isEditingInvoice"]),
   },
+  watch: {
+    isEditingInvoice(){
+      // so vai entrar aqui se mudar o estado de isEditingInvoice, e nesse caso a condicional
+      // verifica se nao esta editando, ou seja, mudou uma vez para true e depois para false (quando
+      // fecha o modal)
+      if(!this.isEditingInvoice){
+        this.currentInvoice = this.currentInvoiceArray[0];
+      }
+    }
+  }
 });
 </script>
 
